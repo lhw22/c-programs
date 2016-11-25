@@ -1,0 +1,127 @@
+#include<stdio.h>
+int strcmp(char*s1,char*s2){
+	int i=0;
+	while(*(s1+i)==*(s2+i++)) return(*(s1+i)-*(s2+i));
+}
+int len(char*x){
+	int i=0;
+	while(*x++) i++;
+	return(i);
+}
+void connect(char*x,char*y){
+	int le;
+	le=len(x);x=x+le;
+	while(*x++=*y++);
+}
+void copy(char*x,char*y){
+	while(*x++=*y++);
+}
+void insert(char*x,char*y,int z){
+	int le,le1,i;
+	le=len(y);le1=len(x);
+	for(i=le1+le;i>z+le;i--)*(x+i)=*(x+i-le);
+	for(i=z;i<z+le;i++)*(x+i)=*(y+i-z);
+}
+void substring(char*x,char*y,int z,int w){
+  int i;
+  for(i=z;i<z+w;i++) *(y+i-z)=*(x+i);*(x+w)='0';	
+}
+int search(char*x,char*y){
+  int i,j,le1,le2,flag;
+  le1=len(x);le2=len(y);
+  for(i=0;i<=le1-le2;i++)
+   {flag=1;
+   for(j=0;j<le2;j++)if(*(x+i+j)!=*(y+j)) {flag=0;break;}
+	if (flag) return(i);
+	}
+	return(-1);	
+}
+void replace(char*x,char*y,char*z){
+	int i,n,le1,le2;
+	le2=len(y);
+	while(search(x,y)!=-1){
+	le1=len(x);n=search(x,y);
+	for(i=n;i<=le1-le2+1;i++) *(x+i)=*(x+i+le2);
+	insert(x,z,n);
+	}
+}
+main(){
+	int ma=1,x,y,z,w;
+	char s[500][255];
+	while (ma){
+	puts("");
+ 	puts("0、 退出");
+ 	puts("1、 输入字符串");
+	puts("2、 显示字符串");
+	puts("3、 求串长");
+	puts("4、 串连接");
+	puts("5、 串比较");
+	puts("6、 串复制");
+	puts("7、 串插入");
+	puts("8、 求子串");
+	puts("9、 串查找");
+	puts("10、串置换");
+	puts("输入0将会退出当前菜单"); 
+	puts("请输入操作指令");	
+    puts("");
+	scanf("%d",&ma);
+	if (ma==1){
+		puts("  请分行输入字符串下标与内容");
+		puts(""); scanf("%d",&x);s[x][0]=getchar(); 
+		gets(s[x]); 
+	}
+	if (ma==2){
+		puts("  请输入字符串下标");
+		puts(""); scanf("%d",&x);
+		puts(s[x]);
+	}
+	if (ma==3){
+		puts("  请输入字符串下标");
+		puts(""); scanf("%d",&x);
+		printf("%d\n",len(s[x]));
+	}
+	if (ma==4){
+	    puts("  请分别输入被连接的和连接的字符串的下标");
+		puts(""); scanf("%d%d",&x,&y);
+		connect(s[x],s[y]); 
+		puts("  操作已完成，请进行后续操作");
+	}
+	if (ma==5){
+	    puts("  请分别输入两个字符串的下标");
+		puts("  输出如果为0则为相等，如果正数则前者大，如果负数则后者大");
+		puts("  输出的数的绝对值为第一个不相同的字符ASC码的差值"); 
+		puts(""); scanf("%d%d",&x,&y);
+		printf("%d\n",strcmp(s[x],s[y]));
+	}
+	if (ma==6){
+	    puts("  请分别输入被其他串复制的的和作为复制的的字符串的下标");
+		puts(""); scanf("%d%d",&x,&y);
+		copy(s[x],s[y]); 
+		puts("  操作已完成，请进行后续操作");
+	}
+	if (ma==7){
+	    puts("  请分别输入被插入的的和进行插入的字符串的下标和插入的位置");
+		puts(""); scanf("%d%d%d",&x,&y,&z);
+		insert(s[x],s[y],z); 
+		puts("  操作已完成，请进行后续操作");
+	}
+	if (ma==8){
+		puts("  请分别输入主串与存串的下标和位置和字符串");
+		puts(""); scanf("%d%d%d%d",&x,&y,&z,&w);
+		substring(s[x],s[y],x,w);
+		puts("  操作已完成，请进行后续操作");
+	}
+	if (ma==9){
+	    puts("  请分别输入母串与子串的下标");
+		puts("  如果找不到将会输出-1");		
+		puts(""); scanf("%d%d",&x,&y);
+		printf("%d\n",search(s[x],s[y]));
+	}
+	if (ma==10){
+		puts("  请分别输入主串与被替换的串与进行替换的串的下标");
+		puts(""); scanf("%d%d%d",&x,&y,&z);
+		replace(s[x],s[y],s[z]);
+		puts("  操作已完成，请进行后续操作");
+	}		
+	} 
+}
