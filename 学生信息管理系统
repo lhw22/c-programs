@@ -1,0 +1,234 @@
+#include<stdio.h>
+int n=0,he=-10086,re=-10086;//头尾指针设成全局变量 
+FILE *f1,*f2;//文件指针亦为全局变量 
+struct student{
+		int next;
+		int sco;
+		int num;
+	}s[10000];
+void headins(struct student *s,int nu,int gr){
+  n++;s[n].num=nu;s[n].sco=gr;
+  if (he==-10086){re=n;s[n].next=-10086;}
+    else s[n].next=he;he=n;	
+}
+void rearins(struct student s[],int nu,int gr){
+  n++;s[n].num=nu;s[n].sco=gr;s[n].next=-10086;
+  if (re==-10086) he=n;
+    else s[re].next=n;re=n;	
+}
+void qsort(int l,int r,int a[],int b[]){//快速排序，带着附属数组 
+	int t,i=l,j=r,mid=a[(l+r)>>1];
+	do{
+	 while(a[i]<mid)i++;
+	 while(a[j]>mid)j--;
+	 if (i<=j){
+	 	t=a[i];a[i]=a[j];a[j]=t;
+	 	t=b[i];b[i]=b[j];b[j]=t;
+	    i++;j--;}
+	}
+	 while(i<j);
+	 if (i<r) qsort(i,r,a,b);
+	 if (j>l) qsort(l,j,a,b);
+}
+void print(struct student *s,int x){
+	int p=he;
+	if (x==1) f2=fopen("out.txt","w");
+	if (x==2) f2=fopen("out.txt","a");
+	if (he==-10086) fprintf(f2,"no data");
+	else{
+		while(p!=-10086){
+		fprintf(f2,"%d %d\n",s[p].num,s[p].sco);
+			p=s[p].next;
+		}
+	}
+	fclose(f2);
+}
+void prints(struct student *s){
+	int p=he;
+	if (he==-10086) fprintf(f2,"no data");
+	else{
+		while(p!=-10086){
+		printf("%d %d\n",s[p].num,s[p].sco);
+			p=s[p].next;
+		}
+	}
+}
+void inspos(struct student *s,int x,int y,int z){
+	int p=he,i;
+	for(i=0;i<x;i++)p=s[p].next;
+	n++;
+	s[n].num=y;s[n].sco=z;s[n].next=s[p].next;s[p].next=n;
+}
+void insorder(struct student *s,int x,int y){
+   int p=he;
+   if (he==-10086) headins(s,x,y);
+   else{
+   	if (s[p].num<s[s[p].next].num){
+   		if (x<s[p].num) headins(s,x,y);
+   		else{while(s[s[p].next].num<x)p=s[p].next;
+		   	n++;s[n].num=x;s[n].sco=y;
+			s[n].next=s[p].next;s[p].next=n;
+	   }
+   	}
+   	else {
+	    if (x>s[p].num) headins(s,x,y);
+   		else{while(s[s[p].next].num>x)p=s[p].next;
+		   	n++;s[n].num=x;s[n].sco=y;
+			s[n].next=s[p].next;s[p].next=n;
+	   }
+	 }
+  }
+}
+void delpos(struct student *s,int x){
+  	int p=he,i;
+  	if (x==0) he=s[he].next;
+  	else{
+	for(i=0;i<x-1;i++)p=s[p].next;
+	s[p].next=s[s[p].next].next;
+ }
+}
+void delnum(struct student *s,int x){
+	int i,p=he;
+	if (s[he].num==x) he=s[he].next;
+	else{
+	while(s[s[p].next].num!=x)p=s[p].next;
+		s[p].next=s[s[p].next].next; 
+   } 
+}
+int find(struct student *s,int x){
+   int p=he,t=0;
+   while(s[p].num!=x && s[p].next!=-10086){
+   p=s[p].next;t++;}
+   if (p!=re||p==re&s[p].num==x) return(t);return(-1);	
+}
+int calcu(struct student *s){
+  int p=he,t=0;
+  if (he==-10086)return 0; 
+  while(p!=-10086) {
+  t++;p=s[p].next;}
+  return t;	
+}
+void avemax(struct student *s,float *x,int *y){//x,y带回2个返回值 
+	int p=he,t1=0,t2=0,t=0;
+	if (he!=-10086){
+	while(s[p].next!=-10086) {
+		t1+=s[p].sco;
+		if (s[p].sco>t2) t2=s[p].sco;t++;
+		p=s[p].next;
+	}
+	*x=float(t1)/t;*y=t2;
+ }
+}
+int failed(struct student *s){
+  int p=he,t=0;
+  if (he==-10086)return 0; 
+  while(p!=-10086) {
+  if (s[p].sco<60)t++;p=s[p].next;}
+  return t;	
+}
+void delall(struct student *s){
+  he=-10086;re=-10086;	
+}
+main(){
+    int a[10000],b[10000];
+	int ma1=-10086,ma2,nu,gr;
+	int x,y,z,i;
+	float ave;
+	while (ma1){
+	  if (ma1!=-10086) puts("");
+	  puts("1. 创建学生记录链表");
+	  puts("2. 打印全部学生记录");
+	  puts("3. 插入一条新的学生记录,注意，数据必须在记录里");
+	  puts("4. 删除一条学生记录");
+	  puts("5. 按学号查找学生记录");
+	  puts("6. 统计");
+	  puts("7. 销毁学生链表");
+	  puts("8. 将学生信息写入磁盘文件");
+	  puts("输入0退出当前菜单"); 
+      puts("");
+      scanf("%d",&ma1);
+      if (ma1==1){
+      	 puts("  1）头插法");
+		 puts("  2）尾插法");
+	     puts("  3）创建按学号有序链表(顺序)");
+	     puts("  4）打开学生信息文件创建链表");
+         puts("");scanf("%d",&ma2);
+         if (ma2==1) {puts("请输入学号和成绩");
+          scanf("%d%d",&nu,&gr);
+		 headins(s,nu,gr);}
+         if (ma2==2) {puts("请输入学号和成绩");
+          scanf("%d%d",&nu,&gr);
+		 rearins(s,nu,gr);}
+         if (ma2==3){
+         	puts("请输入学生人数，以下每行输入学号与成绩");puts("");
+         	/*f1=fopen("in.txt","r");
+			fscanf(f1,"%d",&x);			
+			for(i=0;i<x;i++)fscanf(f1,"%d%d",&a[i],&b[i]);
+			qsort(0,x-1,a,b);*///文件输入时备用（实际上就是用这个调试的）
+			scanf("%d",&x); 
+			for(i=0;i<x;i++)scanf("%d%d",&a[i],&b[i]);
+			qsort(0,x-1,a,b);
+			for(i=0;i<x;i++) rearins(s,a[i],b[i]); 
+			 } 
+         if (ma2==4){
+         	f1=fopen("in.txt","r");
+         	while (!feof(f1)){
+			 fscanf(f1,"%d%d",&nu,&gr);rearins(s,nu,gr);
+		}puts("操作已完成请进行其他操作"); 
+	   }
+     }
+	  if (ma1==2) prints(s);	
+	  if (ma1==3){
+	  	 puts("  1）按指定位序插入，第一个学生为第零位，插入在该位之后");
+	     puts("  2）在有序链表中插入");
+         puts("");
+         scanf("%d",&ma2);
+         if (ma2==1) {puts("请输入位置学号与成绩");
+		 puts("");scanf("%d%d%d",&x,&y,&z); 
+         inspos(s,x,y,z);puts("操作已完成请进行其他操作"); 
+		 }
+		 if (ma2==2) {puts("请输入学号与成绩");
+		 puts("");scanf("%d%d",&x,&y); insorder(s,x,y);
+		 puts("操作已完成请进行其他操作"); 
+		 }
+	  }	  
+	  if (ma1==4){
+	  	 puts("  1）删除指定位置的记录");
+	     puts("  2）删除指定学号的记录");
+         puts("");
+	  	 scanf("%d",&ma2);
+         if (ma2==1) {puts("请输入位置");scanf("%d",&x);
+		 delpos(s,x);puts("操作已完成请进行其他操作");  
+		 }
+		 if (ma2==2) {puts("请输入学号(如果不存在不会进行操作)");scanf("%d",&x);
+		 if(find(s,x)!=-1)delnum(s,x);puts("操作已完成请进行其他操作"); 
+		 }
+	  }
+	  if (ma1==5){
+	  	 puts("请输入学号(输出-1表示不存在)");puts("");scanf("%d",&x);
+		 printf("%d\n",find(s,x)); 
+	  }	  
+	  if (ma1==6){
+	  	 puts("  1）统计学生人数");
+	     puts("  2）统计学生的平均成绩和最高分");
+	     puts("  3）统计不及格人数");
+         puts(""); scanf("%d",&ma2);
+		 if (ma2==1) printf("%d\n",calcu(s));
+         if (ma2==2) {
+		 avemax(s,&ave,&x);printf("%.2f %d",ave,x);}
+         if (ma2==3) printf("%d\n",failed(s));
+	  }
+	  if (ma1==7){
+	  	 delall(s);puts("操作已完成请进行其他操作"); 
+	  }
+	  if (ma1==8){
+	  	 puts("  1）重写学生文件");
+	     puts("  2）追加学生文件");
+	     puts("  3）清空学生文件");
+         puts(""); scanf("%d",&ma2);
+         if (ma2==1) {rewind(f2);print(s,1);} 
+         if (ma2==2) {print(s,2);}
+         if (ma2==3) {remove("out.txt");} 
+	  }
+	}
+}
